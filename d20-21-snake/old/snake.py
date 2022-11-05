@@ -35,10 +35,8 @@ class Snake:
 
     def move(self):
         
-        for i in range(len(self.snake))[::-1]:
-            if i==0 :
-                self.snake[i].forward(20)
-            elif (self.just_ate and i==len(self.snake)-1):
+        for i in range(len(self.snake))[len(self.snake)-1:0:-1]:
+            if (self.just_ate and i==len(self.snake)-1):
                 self.snake.append(self.snake[len(self.snake)-1])
                 last_coord = [self.snake[i].position()[0], self.snake[i].position()[1]]
                 self.snake[i].goto( self.snake[i-1].position()[0], self.snake[i-1].position()[1] )
@@ -47,6 +45,8 @@ class Snake:
                 self.just_ate=False    
             else:
                 self.snake[i].goto( self.snake[i-1].position()[0], self.snake[i-1].position()[1] )
+        self.snake[0].forward(20)
+
             #blocked by walls
         if self.snake[0].position()[0]>300 or self.snake[0].position()[0]<-300 or self.snake[0].position()[1]>300 or self.snake[0].position()[1]<-300:
             print("outside !")
@@ -64,8 +64,6 @@ class Snake:
         head_position=positions[0]
         positions = positions[1:]
         if head_position in positions:
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
             print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
             return True
         print("positions",positions)

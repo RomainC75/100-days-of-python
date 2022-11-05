@@ -38,7 +38,6 @@ while True:
     screen.update()
     time.sleep(0.2)
     if not snake.move():
-        print("FINISHED !!")
         screen.bye()
     head_coord=snake.get_head_position()
     print(f'head position : {head_coord}')

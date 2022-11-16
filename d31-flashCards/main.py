@@ -26,7 +26,7 @@ def next_card():
     canvas.itemconfig(title,text="French")
     canvas.itemconfig(text,text=current_card["French"], fill="black")
     canvas.itemconfig(background, image=back_front)
-    id =window.after(3000, func=flip_card )
+    id =window.after( 3000, func=flip_card )
 
 def flip_card():
     global current_card

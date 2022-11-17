@@ -9,7 +9,6 @@ from twilio.http.http_client import TwilioHttpClient
 # check next 12h
 #send sms if rain
 
-
 proxy_client = TwilioHttpClient()
 proxy_client.session.proxies = {'https': os.environ['https_proxy']}
 

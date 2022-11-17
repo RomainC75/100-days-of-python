@@ -5,7 +5,9 @@ config = dotenv.dotenv_values()
 import json
 
 #==========================================
-# this script asks to 
+# this script asks what kind of exercice you did today in a natural language
+# and it write it down to a google sheet
+# uses 2 apis : sheety(connected to google sheet) and nutritionix
 
 key=config['NUTRITIONIX_KEY']
 id = config["NUTRITIONIX_APP_ID"]

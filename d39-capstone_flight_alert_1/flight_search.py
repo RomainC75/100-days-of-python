@@ -43,11 +43,8 @@ class FlightSearch:
             "curr": "EUR"
         }
         raw_ans = requests.get( f'{self.api_url}/{endpoint}', params=params, headers=self.headers )
-        print("OBJECTIF : ",to_city_code)
-        print("ans : ", raw_ans.text)
         raw_ans.raise_for_status()
         ans = raw_ans.json()
-        # print( "ans : ", ans )
         route = ans['data'][0]['route'][0]
 
         flight_data = FlightData(
@@ -59,6 +56,5 @@ class FlightSearch:
             destination_city=route['cityTo'],
             destination_airport=route['flyTo']
         )
-        print( "xxx : ", flight_data.get_data()['price'] )
         return flight_data
         

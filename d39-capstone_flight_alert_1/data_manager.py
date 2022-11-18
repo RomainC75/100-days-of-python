@@ -13,7 +13,6 @@ class DataManager:
         
     def get_rows(self):
         raw_ans=requests.get(self.url, headers=self.headers)
-        # print("raw : ", raw_ans.text)
         ans = raw_ans.json()
         return ans
         
@@ -27,15 +26,14 @@ class DataManager:
         raw_ans = requests.get(new_url, headers=self.headers)
         return raw_ans.json()
 
-
     def update_IATA_codes(self):
         rows = self.get_rows()
-        print("pre : ", rows)
         for row in rows['prices']:
             print("=>",row)
             if len(row['iataCode'])==0:
                 print("...",row['id'], row['city'].replace(" ","")[0:3].upper() )
                 self.update_IATA_code( row['id'], row['city'].replace(" ","")[0:3].upper() )
+                self.up
 
     def update_IATA_code(self,id,iata):
         body = {
@@ -44,7 +42,6 @@ class DataManager:
             }
         }
         raw_ans = requests.put(f'{self.url}/{id}', json=body, headers=self.headers)
-        print(f'put iata : {id}', raw_ans)
 
     def update_price(self,id, new_price:int):
         body = {
@@ -53,5 +50,4 @@ class DataManager:
             }
         }
         raw_ans = requests.put(f'{self.url}/{id}', json=body, headers=self.headers)
-        print(f'put iata : {id}', raw_ans)
         

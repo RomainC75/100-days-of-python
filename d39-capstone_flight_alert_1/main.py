@@ -16,9 +16,6 @@ print("departure to : ",depart_to)
 rows = datamanager.get_rows()
 
 for row in rows['prices']:
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print("row : ", row)
     lowestPrice= row['lowestPrice']
     destination = row['iataCode']
 
@@ -26,11 +23,6 @@ for row in rows['prices']:
     flight_data = flight_search.check_availaible_flights("PAR", destination, depart_from, depart_to)
     
     if flight_data.get_data()['price']< lowestPrice:
-        print(" ================ ")
-        print("row : ", row)
-        print("flight_data : ",  flight_data.get_data()['price'])
-        #update row
-        #send
         notification = NotificationManager(flight_data)
         notification.send_message()
         datamanager.update_price(row['id'],flight_data.get_data()['price'])

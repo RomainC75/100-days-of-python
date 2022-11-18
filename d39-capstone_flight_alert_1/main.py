@@ -33,6 +33,7 @@ for row in rows['prices']:
         #send
         notification = NotificationManager(flight_data)
         notification.send_message()
+        datamanager.update_price(row['id'],flight_data.get_data()['price'])
 
 
 

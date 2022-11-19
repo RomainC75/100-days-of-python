@@ -52,8 +52,6 @@ def get_news(name):
     news = news_raw.json()
     return news
 
-
-
 finance_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=TSLA&interval=60min&apikey={config['ALPHA_ADVANTAGE_KEY']}"
 raw = requests.get(finance_url)
 raw.raise_for_status()

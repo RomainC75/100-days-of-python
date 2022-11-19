@@ -12,6 +12,7 @@ class NotificationManager:
     def __init__(self, flightData:FlightData) -> None:
         self.flightData = flightData
         self.data = self.flightData.get_data()
+        self.url = 
         self.message = f"Low price alert : {self.data['price']} EUR to fly from {self.data['origin_city']} to {self.data['destination_city']} from {self.data['out_date']} to {self.data['return_date']}. {self.data['stop_overs'] if self.data['stop_overs']>0 else 'no'} {'stops in' if self.data['stop_overs']>0 else ''} {self.data['via_city'] if len(self.data['via_city'])>0 else ''}"
         self.sheety_url="https://api.sheety.co/6a5c5ac0fcac8b7574d0f2b93b8f2e29/flightDestination/users"
         self.sheety_headers = {

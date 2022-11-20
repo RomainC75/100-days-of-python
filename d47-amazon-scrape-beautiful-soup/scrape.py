@@ -1,6 +1,5 @@
 import pandas
 import requests
-import lxml
 from bs4 import BeautifulSoup
 
 class Scrape:
@@ -23,7 +22,6 @@ class Scrape:
             ans=requests.get(url=url, headers=self.headers)
             soup = BeautifulSoup(ans.content,'lxml')
             price = soup.select_one(".priceToPay > span")
-            print("price : ", price)
             price_text = price.contents[0]
             float_price = float( price_text.replace(",",".").replace("€","") )
             return float_price
@@ -31,10 +29,8 @@ class Scrape:
             return None
 
     def scrape_all(self):
-        # print("dict : ", self.dict)
         for article in self.articles:
             price = self.get_price(article['url'])
-            print("article : ",article)
             if( price and price<float( article['price'] ) ):
                 self.results.append({
                     'url':article['url'],

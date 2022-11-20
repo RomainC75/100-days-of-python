@@ -9,21 +9,6 @@ driver = webdriver.Chrome(service=s)
 url='https://www.python.org/'
 driver.get(url)
 
-# find_element-S-
-# find_element(By.ID, "id")
-# find_element(By.NAME, "name")
-# find_element(By.XPATH, "xpath")
-# find_element(By.LINK_TEXT, "link text")
-# find_element(By.PARTIAL_LINK_TEXT, "partial link text")
-# find_element(By.TAG_NAME, "tag name")
-# find_element(By.CLASS_NAME, "class name")
-# find_element(By.CSS_SELECTOR, "css selector")
-
-# element.text
-# element.get_attribute("value")
-# element.value_of_css_property('color')
-# coords
-# element.rect
 
 schedule = driver.find_element(By.XPATH,'/html/body/div[1]/div[3]/div/section/div[3]/div[2]/div/ul')
 

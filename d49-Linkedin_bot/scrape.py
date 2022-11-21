@@ -95,7 +95,9 @@ class Scrape:
             button_send.click()
             time.sleep(1)
             #=================
-            #dismiss from the confirmation window
+            #......
+            dismiss_button = self.driver.find_element(By.CSS_SELECTOR,'.artdeco-modal__dismiss')
+            dismiss_button.click()
             #=================
             print("===> Applied !!!! ^^^^^^")
             return True

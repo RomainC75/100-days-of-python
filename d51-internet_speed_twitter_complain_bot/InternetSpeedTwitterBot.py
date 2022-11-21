@@ -26,11 +26,9 @@ class InternetSpeedTwitterBot:
 
     def get_internet_speed(self):
         self.driver.get(SPEED_TEST_URL)
-        accept_cookie_btn = self.driver.find_element(By.CSS_SELECTOR,'#onetrust-accept-btn-handler')
-        accept_cookie_btn.click()
+        self.driver.find_element(By.CSS_SELECTOR,'#onetrust-accept-btn-handler').click()
         time.sleep(0.5)
-        go_btn = self.driver.find_element(By.CSS_SELECTOR, ".start-text")
-        go_btn.click()
+        self.driver.find_element(By.CSS_SELECTOR, ".start-text").click()
 
         url_not_changed = True
         while url_not_changed:
@@ -47,21 +45,16 @@ class InternetSpeedTwitterBot:
 
     def tweet_at_provider(self):
         self.connect_to_twitter()
-        
         text = f'I pay an Internet connection for down:{self.down}/up{self.up} and I have down:{self.current_down_speed}/up{self.current_up_speed}'
 
         self.wait_for_selector("a[aria-label=Tweet]")
-        new_tweet_button = self.driver.find_element(By.CSS_SELECTOR, "a[aria-label=Tweet]")
-        new_tweet_button.click()
-
+        self.driver.find_element(By.CSS_SELECTOR, "a[aria-label=Tweet]").click()
+        
         self.wait_for_selector('div[aria-label="Tweet text"]')
         new_tweet_button = self.driver.find_element(By.CSS_SELECTOR, 'div[aria-label="Tweet text"]')
         new_tweet_button.send_keys(text)
 
-        add_tweet_button = self.driver.find_element(By.CSS_SELECTOR, 'div[data-testid="tweetButton"]')
-        add_tweet_button.click()
-
-
+        self.driver.find_element(By.CSS_SELECTOR, 'div[data-testid="tweetButton"]').click()
 
     def connect_to_twitter(self):
         self.driver.get(TWITTER_LOGIN_URL)
@@ -85,7 +78,6 @@ class InternetSpeedTwitterBot:
         username_input.send_keys(self.twitter_pass)
         
         self.click_on_button_with_text('div[role=button]', "Log in")
-
 
     def wait_for_selector(self, css_selector):
         not_found=True

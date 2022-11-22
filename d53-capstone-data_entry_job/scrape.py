@@ -5,8 +5,9 @@ from selenium.webdriver.common.keys import Keys
 chrome_driver_path="../selenium_driver/chromedriver"
 import time
 import re
+MAX_WAITING_CYCLES = 20
 
-ZILLOW_URL = "https://www.zillow.com/new-york-ny/rentals/?searchQueryState=%7B%22pagination%22%3A%7B%7D%2C%22usersSearchTerm%22%3A%22New%20York%2C%20NY%22%2C%22mapBounds%22%3A%7B%22west%22%3A-73.996945678424%2C%22east%22%3A-73.74597674531853%2C%22south%22%3A40.656346166690724%2C%22north%22%3A40.81113701312022%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A6181%2C%22regionType%22%3A6%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22fsba%22%3A%7B%22value%22%3Afalse%7D%2C%22fsbo%22%3A%7B%22value%22%3Afalse%7D%2C%22nc%22%3A%7B%22value%22%3Afalse%7D%2C%22fore%22%3A%7B%22value%22%3Afalse%7D%2C%22cmsn%22%3A%7B%22value%22%3Afalse%7D%2C%22auc%22%3A%7B%22value%22%3Afalse%7D%2C%22fr%22%3A%7B%22value%22%3Atrue%7D%2C%22ah%22%3A%7B%22value%22%3Atrue%7D%2C%22mp%22%3A%7B%22min%22%3A1000%2C%22max%22%3A2800%7D%2C%22price%22%3A%7B%22min%22%3A202331%2C%22max%22%3A566526%7D%2C%22beds%22%3A%7B%22min%22%3A2%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A13%7D"
+ZILLOW_URL = "https://www.zillow.com/san-francisco-ca/rentals/?itc=_zw_zh_homepage-renter_btn_find-rentals-v1-property-types&searchQueryState=%7B%22pagination%22%3A%7B%7D%2C%22mapBounds%22%3A%7B%22west%22%3A-122.61632052783203%2C%22east%22%3A-122.25033847216797%2C%22south%22%3A37.46283218401745%2C%22north%22%3A38.08643671580814%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A20330%2C%22regionType%22%3A6%7D%5D%2C%22isMapVisible%22%3Atrue%2C%22filterState%22%3A%7B%22fsba%22%3A%7B%22value%22%3Afalse%7D%2C%22fsbo%22%3A%7B%22value%22%3Afalse%7D%2C%22nc%22%3A%7B%22value%22%3Afalse%7D%2C%22fore%22%3A%7B%22value%22%3Afalse%7D%2C%22cmsn%22%3A%7B%22value%22%3Afalse%7D%2C%22auc%22%3A%7B%22value%22%3Afalse%7D%2C%22fr%22%3A%7B%22value%22%3Atrue%7D%2C%22ah%22%3A%7B%22value%22%3Atrue%7D%2C%22mp%22%3A%7B%22min%22%3A1400%2C%22max%22%3A3500%7D%2C%22price%22%3A%7B%22min%22%3A283114%2C%22max%22%3A707785%7D%2C%22beds%22%3A%7B%22min%22%3A2%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A11%7D"
 
 array_test = [
     ["57 Elmhurst LLC, 94-25 57th Ave, Elmhurst, NY 11373","2,699","https://www.zillow.com/homedetails/94-25-57th-Ave-48EB0198D-Elmhurst-NY-11373/2066695920_zpid/"],
@@ -18,7 +19,8 @@ class Scrape():
     def __init__(self) -> None:
         self.s=Service(chrome_driver_path)
         self.driver = webdriver.Chrome(service=self.s)        
-        self.data=array_test
+        self.data=[]
+        self.max_waiting_cycles=MAX_WAITING_CYCLES
 
     def get_infos_on_page(self):
         self.driver.get(ZILLOW_URL)
@@ -51,8 +53,10 @@ class Scrape():
         time.sleep(1)
         for li in lis:
             print("text test : ", li.text)
-            if li.text=="" and li.get_attribute("data-test")!="search-list-first-ad":
+            if li.text=="" and li.get_attribute("data-test")!="search-list-first-ad" and self.max_waiting_cycles>0:
+                self.max_waiting_cycles-=1
                 return self.infos_is_here()
+        self.max_waiting_cycles=MAX_WAITING_CYCLES
         return True
 
 
@@ -67,6 +71,7 @@ class Scrape():
         try:
             address = li.find_element(By.CSS_SELECTOR,"address[data-test=property-card-addr]").text
             price = li.find_element(By.CSS_SELECTOR,"span[data-test=property-card-price]").text
+            price = re.findall(r"[0-9,]+", price)[0]
             link = li.find_element(By.CSS_SELECTOR,"a").get_attribute("href")
             print(f"==>{address}///{price}///{link}")
             return {

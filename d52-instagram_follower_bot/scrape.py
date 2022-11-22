@@ -49,31 +49,7 @@ class Scrape:
         #==>follow
         self.click_on_buttons_with_text(follower_window, "button", "Follow")
 
-    def wait_for_selector(self, css_selector):
-        not_found=True
-        while not_found:
-            time.sleep(0.5)
-            try:
-                self.driver.find_element(By.CSS_SELECTOR, css_selector)
-            except:
-                pass
-            else:
-                not_found=False
-
-    def wait_for_element_with_text(self, css_selector, text):
-        not_found=True
-        print("entered")
-        while not_found:
-            time.sleep(0.5)
-            try:
-                buttons = self.driver.find_elements(By.CSS_SELECTOR, css_selector)
-                for button in buttons :
-                    print("button text : ", button.text)
-                    if(button.text==text):
-                        print("FOUND ! ")
-                        not_found=False
-            except:
-                pass
+ 
                 
     def click_on_button_with_text(self,css_selector, text):
         buttons=self.driver.find_elements(By.CSS_SELECTOR, css_selector)

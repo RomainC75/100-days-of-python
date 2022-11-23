@@ -62,3 +62,5 @@ wrapt==1.14.1
 wsproto==1.2.0
 WTForms==3.0.1
 zipp==3.10.0
+dominate==2.5.2
+visitor==0.1.3

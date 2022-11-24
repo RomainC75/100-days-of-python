@@ -1,0 +1,21 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Book</title>
+</head>
+<body>
+    <!-- <form action="" method="POST">
+        <label>Book Name</label>
+        <input type="text">
+        <label>Book Author</label>
+        <input type="text">
+        <label>Rating</label>
+        <input type="text">
+        <button type="submit">Add Book</button>
+    </form> -->
+    {{ wtf.quick_form(form) }}
+</body>
+</html>

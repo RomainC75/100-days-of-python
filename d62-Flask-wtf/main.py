@@ -44,7 +44,6 @@ def add_cafe():
         form.validate_on_submit()
         return render_template("add.html", form=form)
     elif form.validate_on_submit():
-
         cafe = form.cafe.data
         location = form.location.data
         open_var = form.open.data
@@ -62,8 +61,7 @@ def add_cafe():
         return redirect(url_for('cafes'))
     # Exercise:
     # Make the form write a new row into cafe-data.csv
-    # with   if form.validate_on_submit()
-    
+    # with if form.validate_on_submit()
 
 @app.route('/cafes')
 def cafes():
@@ -75,7 +73,6 @@ def cafes():
         print(list_of_rows)
     csv_file.close()
     return render_template('cafes.html', cafes=list_of_rows)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

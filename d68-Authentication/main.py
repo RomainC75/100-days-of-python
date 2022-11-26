@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager
 
 app = Flask(__name__)
@@ -31,7 +31,10 @@ class User(UserMixin, db.Model):
 
 #Line below only required once, when creating DB. 
 # db.create_all()
-
+@login_manager.user_loader
+def load_user(user_id):
+    print("===>insidfe")
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def home():
@@ -40,7 +43,6 @@ def home():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    
     if request.method=='GET':
         return render_template("register.html")
     elif request.method=="POST":
@@ -54,13 +56,30 @@ def register():
         return redirect(url_for("secrets"))
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    return render_template("login.html")
+    error = None
+    if request.method=="POST":
+        email=request.form.get("email")
+        password=request.form.get("password")
+        found_user = User.query.filter_by(email=email).first()
+        if not found_user:
+            error="User doesn't exist "
+        elif check_password_hash(pwhash=found_user.password, password=password):
+            login_user(found_user)
+            return redirect(url_for("secrets"))
+        else:
+            error="Password doesn't match"
+        # flash("successfuly logged in")
+        # return redirect(url_for("home"))
+        
+    return render_template("login.html", error=error)
 
 
 @app.route('/secrets')
+@login_required
 def secrets():
+    print(current_user.name)
     return render_template("secrets.html")
 
 
@@ -69,10 +88,10 @@ def logout():
     pass
 
 @app.route('/download')
+@login_required
 def download():
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                "cheat_sheet.pdf", as_attachment=True)
-
 
 if __name__ == "__main__":
     app.run(debug=True)

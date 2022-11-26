@@ -8,25 +8,29 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from forms import CreatePostForm
 from flask_gravatar import Gravatar
-from forms import CreatePostForm, UserRegisterForm
+from forms import CreatePostForm, UserRegisterForm, UserLoginForm
 from datetime import datetime
 
 
 app = Flask(__name__)
+
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 ##CONNECT TO DB
-
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 ##CONFIGURE TABLES
-
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
@@ -47,6 +51,8 @@ class User(UserMixin, db.Model):
 
 @app.route('/')
 def get_all_posts():
+    user = current_user.name
+    print("===> USER NAME : ", user)
     posts = BlogPost.query.all()
     return render_template("index.html", all_posts=posts)
 
@@ -66,9 +72,22 @@ def register():
     return render_template("register.html", form=form)
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET','POST'])
 def login():
-    return render_template("login.html")
+    form = UserLoginForm()
+    error = None
+    if form.validate_on_submit():
+        email=request.form.get("email")
+        password=request.form.get("password")
+        found_user = User.query.filter_by(email=email).first()
+        if not found_user:
+            error="User doesn't exist"
+        elif check_password_hash(pwhash=found_user.password, password=password):
+            login_user(found_user)
+            return redirect(url_for("get_all_posts"))
+        else:
+            error="wrong password"
+    return render_template("login.html", form=form, error=error)
 
 
 @app.route('/logout')

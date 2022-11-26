@@ -21,7 +21,9 @@
 
   <div class="container">
     <div class="row">
-
+      {% if error %}
+        <p>{{error}}</p>
+        {% endif %}
       <div class="col-lg-8 col-md-10 mx-auto content">
         {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
       </div>

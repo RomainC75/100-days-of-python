@@ -38,6 +38,8 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
+    if current_user.name:
+        return render_template("index.html",logged_in=True)
     return render_template("index.html")
 
 
@@ -80,7 +82,8 @@ def login():
 @login_required
 def secrets():
     print(current_user.name)
-    return render_template("secrets.html")
+    # return render_template("secrets.html")
+    return render_template("secrets.html", logged_in=current_user.is_authenticated)
 
 
 @app.route('/logout')

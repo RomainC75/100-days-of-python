@@ -21,3 +21,7 @@ class UserLoginForm(FlaskForm):
     email = StringField("email", validators=[DataRequired()])
     password = PasswordField("password", validators=[DataRequired()])
     submit = SubmitField("Submit User")
+
+class CommentForm(FlaskForm):
+    comment = body = CKEditorField("Blog Comment", validators=[DataRequired()])
+    submit = SubmitField("Submit Comment")

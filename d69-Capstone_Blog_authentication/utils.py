@@ -10,7 +10,11 @@ def admin_only(func):
         return abort(404, description="not allowed!")
     return decorated_function
         
-
+def row2dict(row):
+    d = {}
+    for column in row.__table__.columns:
+        d[column.name] = str(getattr(row, column.name))
+    return d
 
 # def login_required(f):
 #     @wraps(f)

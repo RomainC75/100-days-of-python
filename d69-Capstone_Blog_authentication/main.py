@@ -10,6 +10,8 @@ from forms import CreatePostForm
 from flask_gravatar import Gravatar
 from forms import CreatePostForm, UserRegisterForm, UserLoginForm
 from datetime import datetime
+from utils import admin_only
+
 
 
 app = Flask(__name__)
@@ -51,14 +53,13 @@ class User(UserMixin, db.Model):
 
 @app.route('/')
 def get_all_posts():
+    is_authenticated = current_user.is_authenticated
     try:
-        user = current_user.name
-        print("===> USER NAME : ", user)
+        is_admin = True if current_user.id==1 else False
     except:
-        print("==>anonymous")
-        user=None
+        is_admin = False
     posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts, is_logged_in=user)
+    return render_template("index.html", all_posts=posts, is_logged_in=is_authenticated, is_admin=is_admin)
 
 
 @app.route('/register', methods=['GET','POST'])
@@ -111,8 +112,12 @@ def logout():
 
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
+    try:
+        is_admin = True if current_user.id==1 else False
+    except:
+        is_admin = False
     requested_post = BlogPost.query.get(post_id)
-    return render_template("post.html", post=requested_post)
+    return render_template("post.html", post=requested_post, is_admin=is_admin)
 
 
 @app.route("/about")
@@ -126,6 +131,7 @@ def contact():
 
 
 @app.route("/new-post")
+@admin_only
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
@@ -144,6 +150,7 @@ def add_new_post():
 
 
 @app.route("/edit-post/<int:post_id>")
+@admin_only
 def edit_post(post_id):
     post = BlogPost.query.get(post_id)
     edit_form = CreatePostForm(

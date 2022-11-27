@@ -40,19 +40,33 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     posts = relationship("BlogPost", back_populates="author")
+    comments = relationship("Comment", back_populates="author")
 
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     author = relationship( "User", back_populates = "posts" )
-    # author = db.Column(db.String(250), nullable=False)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
 
+    comments = relationship("Comment", back_populates="post")
+    
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    author = relationship( "User", back_populates = "comments" )
+
+    post_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
+    post = relationship( "BlogPost", back_populates = "comments" )
+
+    date = db.Column(db.String(250), nullable=False)
+    comment = db.Column(db.String(500), unique=True, nullable=False)
 # db.create_all()
 
 
@@ -116,14 +130,30 @@ def logout():
     return redirect(url_for('get_all_posts'))
 
 
-@app.route("/post/<int:post_id>")
+@app.route("/post/<int:post_id>", methods=['GET','POST'])
 def show_post(post_id):
+    commentForm = CommentForm()
+    if commentForm.validate_on_submit():
+        print("==>comment Forml ", commentForm.body.data)
+        comment = Comment(
+            author_id=current_user.id,
+            comment=commentForm.body.data,
+            post_id=post_id,
+            date=date.today().strftime("%B %d, %Y")
+        )
+        db.session.add(comment)
+        db.session.commit()
+
+    user = login_user if current_user.is_authenticated else None
     try:
         is_admin = True if current_user.id==1 else False
     except:
         is_admin = False
     requested_post = BlogPost.query.get(post_id)
-    return render_template("post.html", post=requested_post, is_admin=is_admin)
+    print("user : ", user)
+    #if not connected 
+    #>flash
+    return render_template("post.html", post = requested_post, is_admin = is_admin, user = user, commentForm=commentForm)
 
 
 @app.route("/about")

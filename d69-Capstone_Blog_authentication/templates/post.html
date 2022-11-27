@@ -36,33 +36,33 @@
             >Edit Post</a
           >
         </div>
+        
+
+
         {% endif %} 
         
         <!--           Comments Area -->
         {{ ckeditor.load() }} 
         {{ ckeditor.config(name='comment') }} 
-        <p>=========================================</p>
         {{ wtf.quick_form(commentForm, novalidate=True, button_map={"submit":
         "primary"}) }}
         
         <div class="col-lg-8 col-md-10 mx-auto comment">
+          {% for comment in post.comments: %}
           <ul class="commentList">
-            <li>
-              <div class="commenterImage">
-                <img
-                  src="https://pbs.twimg.com/profile_images/744849215675838464/IH0FNIXk.jpg"
-                />
-              </div>
-              <div class="commentText">
-                <p>Some comment</p>
-                <span class="date sub-text">comment author name</span>
-
-                
-              </div>
-            </li>
+              <li>
+                  <div class="commenterImage">
+                      <img src="{{ comment.author.email | gravatar }}"/>
+                  </div>
+                  <div class="commentText">
+                      {{comment.comment|safe}}
+                      <span class="date sub-text">{{comment.author.name}}</span>
+                      <span class="date">{{comment.date}}</span>
+                  </div>
+              </li>
           </ul>
-        </div>
-        
+          {% endfor %}
+      </div>
 
       </div>
     </div>

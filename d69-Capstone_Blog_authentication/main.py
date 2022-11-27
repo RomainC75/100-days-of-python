@@ -28,6 +28,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+gravatar = Gravatar(app,
+                size=100,
+                rating='g',
+                default='retro',
+                force_default=False,
+                force_lower=False,
+                use_ssl=False,
+                base_url=None)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -144,16 +153,19 @@ def show_post(post_id):
         db.session.add(comment)
         db.session.commit()
 
+
     user = login_user if current_user.is_authenticated else None
     try:
         is_admin = True if current_user.id==1 else False
     except:
         is_admin = False
     requested_post = BlogPost.query.get(post_id)
+    comments = [ row2dict(comment) for comment in Comment.query.filter(post_id==post_id).all()]
+    print("comments : ", comments)
     print("user : ", user)
     #if not connected 
     #>flash
-    return render_template("post.html", post = requested_post, is_admin = is_admin, user = user, commentForm=commentForm)
+    return render_template("post.html", post = requested_post, is_admin = is_admin, user = user, commentForm=commentForm, comments=comments, gravatar=gravatar)
 
 
 @app.route("/about")

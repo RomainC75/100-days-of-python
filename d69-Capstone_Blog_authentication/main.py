@@ -5,7 +5,7 @@ from datetime import date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user, logout_user
 from forms import CreatePostForm
 from flask_gravatar import Gravatar
 from forms import CreatePostForm, UserRegisterForm, UserLoginForm
@@ -46,21 +46,30 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
-
 # db.create_all()
+
 
 @app.route('/')
 def get_all_posts():
-    user = current_user.name
-    print("===> USER NAME : ", user)
+    try:
+        user = current_user.name
+        print("===> USER NAME : ", user)
+    except:
+        print("==>anonymous")
+        user=None
     posts = BlogPost.query.all()
-    return render_template("index.html", all_posts=posts)
+    return render_template("index.html", all_posts=posts, is_logged_in=user)
 
 
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = UserRegisterForm()
     if form.validate_on_submit():
+        found_user = User.query.filter_by(email=request.form.get("email")).first()
+        if found_user:
+            flash("email already used !", "text-danger")
+            return redirect(url_for("login"))
+
         new_user = User(
             name=request.form.get("name"),
             email=request.form.get("email"),
@@ -68,6 +77,7 @@ def register():
         )
         db.session.add(new_user)
         db.session.commit()
+
         return redirect(url_for('get_all_posts'))
     return render_template("register.html", form=form)
 
@@ -81,17 +91,21 @@ def login():
         password=request.form.get("password")
         found_user = User.query.filter_by(email=email).first()
         if not found_user:
-            error="User doesn't exist"
+            # error="User doesn't exist"
+            flash("user doesn't exist !", "text-danger")
         elif check_password_hash(pwhash=found_user.password, password=password):
             login_user(found_user)
             return redirect(url_for("get_all_posts"))
         else:
-            error="wrong password"
+            # error="wrong password"
+            flash("wrong password !", "text-danger")
     return render_template("login.html", form=form, error=error)
 
 
 @app.route('/logout')
 def logout():
+    logout_user()
+    print("==>log out ! ")
     return redirect(url_for('get_all_posts'))
 
 

@@ -33,3 +33,25 @@ clean_df.loc[8]
 
 # create a new column with arithmetic
 spread_column = (clean_df['Mid-Career 90th Percentile Salary']-clean_df['Mid-Career 10th Percentile Salary'])
+
+# insert a new column
+clean_df.insert(1,'spread',spread_column)
+
+# sort the values depending on a column
+clean_df.sort_values('spread')
+
+# ex 
+res1 = clean_df.sort_values('Mid-Career 90th Percentile Salary', ascending=False).head()
+
+res2 = clean_df.sort_values('spread', ascending=False).head()
+
+
+# pivoting
+# count the number of rows by group : 
+df.groupby('Group_name').count()
+
+#formation the output after this line
+pd.options.display.float_format = '{:,.2f}'.format
+
+# sum the other cells after grouping :
+df.groupby('Group_name').mean()

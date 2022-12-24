@@ -47,18 +47,25 @@ plt.style.use('_mpl-gallery')
 
 # fig, ax = plt.subplots()
 
+
+# pivoted_df = pivoted_df.rolling(window=6).mean()
+colors = ['blue','orange','green','red','purple','brown','pink','gray','olive','cyan']
+
+
 plt.figure(figsize=(16,10))
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=14)
 plt.xlabel('Date',fontsize=14)
 plt.ylabel('Number of Posts', fontsize=14)
 plt.ylim(0,35000)
-plt.plot(pivoted_df.index, pivoted_df['java'])
-plt.plot(pivoted_df.index, pivoted_df['python'], color="orange")
 
+for index,column_name in enumerate(pivoted_df.columns):
+    print("====",pivoted_df[column_name].name)
+    plt.plot(pivoted_df.index, 
+        pivoted_df[column_name],
+        color=colors[index%len(colors)],
+        linewidth=3,
+        label=column_name)
 
-
-# ax.set(xlim=(0, 8), xticks=java_df['DATE'],
-#        ylim=(0, 8), yticks=java_df[])
-
+plt.legend(fontsize=16)
 plt.show()
